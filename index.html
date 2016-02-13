@@ -1,0 +1,135 @@
+<html>
+<head>
+    <title>Angular 2 Excel</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- 1. Load libraries -->
+    <!-- IE required polyfills, in this exact order -->
+    <script src="node_modul§es/es6-shim/es6-shim.min.js"></script>
+    <script src="node_modules/systemjs/dist/system-polyfills.js"></script>
+
+    <script src="node_modules/angular2/bundles/angular2-polyfills.js"></script>
+    <script src="node_modules/systemjs/dist/system.src.js"></script>
+    <script src="node_modules/rxjs/bundles/Rx.js"></script>
+    <script src="node_modules/angular2/bundles/angular2.dev.js"></script>
+
+    <!-- 2. Configure SystemJS -->
+    <script>
+        System.config({
+            packages: {
+                app: {
+                    format: 'register',
+                    defaultExtension: 'js'
+                }
+            }
+        });
+        System.import('app/main')
+                .then(null, console.error.bind(console));
+    </script>
+
+    <style>
+        * { box-sizing: border-box; }
+        body, input, td { font-family: sans-serif; font-size: 14px; }
+        input { border: none; outline: none; }
+        table { border-collapse: collapse; }
+        th { text-align: center;
+            background: #eee;
+            padding: 0 1em;
+        }
+        td { border: 1px solid #eee;
+            position: relative;
+            width: 60px; height: 22px;
+        }
+    </style>
+
+</head>
+
+<!-- 3. Display the application -->
+<body>
+    <my-app>Loading...</my-app>
+</body>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- HERE BE DRAGONS -->
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+    // DO NOT USE THIS, IT'S INSECURE AND HORRIBLY WRONG
+    // SERIOUSLY, DO NOT COPY PASTE THIS ANYWHERE
+    // made for experimental demonstration purposes only
+    window.evilEval = function(expression, context) {
+        with (context) {
+            try {
+                return eval(expression);
+            } catch (e) {
+                return expression;
+            }
+        }
+    }
+</script>
+
+</html>
