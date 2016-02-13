@@ -1,20 +1,20 @@
 import {Injectable} from 'angular2/core';
 import {Subject} from 'rxjs/Subject';
-import {Cell} from './cell';
+import {CellValue} from './cell';
 
 @Injectable()
 export class SpreadsheetService {
     // Subject stream for cells to broadcast when they update
     // Rx.Subject allows for both publish and subscribe, so cells can
     // also subscribe to get notified about updates to other cells.
-    public update$: Subject<Cell> = new Subject();
+    public update$: Subject<CellValue> = new Subject();
 
     // Object that holds the latest value of each cell
     private context: Object = {};
 
     constructor() {
         this.update$
-            .scan((accumulator: Object, cell: Cell) => {
+            .scan((accumulator: Object, cell: CellValue) => {
                 accumulator[cell.id] = cell.value;
 
                 return accumulator;
