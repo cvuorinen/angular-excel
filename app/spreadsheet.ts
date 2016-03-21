@@ -27,3 +27,7 @@ export class SpreadsheetService {
         return window.evilEval(expression, this.context);
     }
 }
+
+interface Window {
+    evilEval(expression: string, context?: any): any;
+}
