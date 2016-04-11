@@ -37,7 +37,7 @@ export class Cell {
         // Filter spreadsheet updates to only the cells used in the formula
         const update$: Observable<CellValue> = spreadsheet.update$
             .withLatestFrom(formula$) // combine formula so we can filter with it
-            .filter(([cell, formula]) => formula.indexOf(cell.id) > -1)
+            .filter(([cell, formula]: [CellValue, string]) => formula.indexOf(cell.id) > -1)
             .map((values) => values[0]) // just the cell value from now on
             .startWith(this.getValue()); // so that combineLatest doesn't need to wait for updates
 
