@@ -10,7 +10,10 @@ export class SpreadsheetService {
     public update$: Subject<Cell> = new Subject();
 
     // Object that holds the latest value of each cell
-    private context: Object = {};
+    private context: Object = {
+        // It can also have functions that can be used in the formulas
+        sum: (...args) => args.reduce((x, y) => x+y)
+    };
 
     constructor() {
         this.update$
@@ -23,11 +26,11 @@ export class SpreadsheetService {
     }
 
     public evaluate(expression: string): any {
-        // Don't try this at home kids!
-        return window.evilEval(expression, this.context);
+        // Use stangalone ngParser library since couldn't find equivalent in Angular2 public API
+        try {
+            return ngParser(expression)(this.context);
+        } catch (e) {
+            return expression;
+        }
     }
-}
-
-interface Window {
-    evilEval(expression: string, context?: any): any;
 }

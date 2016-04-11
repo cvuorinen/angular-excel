@@ -12,6 +12,7 @@
     <script src="node_modules/systemjs/dist/system.src.js"></script>
     <script src="node_modules/rxjs/bundles/Rx.js"></script>
     <script src="node_modules/angular2/bundles/angular2.dev.js"></script>
+    <script src="node_modules/ng-parser/dist/ngParser.min.js"></script>
 
     <!-- 2. Configure SystemJS -->
     <script>
@@ -48,88 +49,5 @@
 <body>
     <my-app>Loading...</my-app>
 </body>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<!-- HERE BE DRAGONS -->
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<script>
-    // DO NOT USE THIS, IT'S INSECURE AND HORRIBLY WRONG
-    // SERIOUSLY, DO NOT COPY PASTE THIS ANYWHERE
-    // made for experimental demonstration purposes only
-    window.evilEval = function(expression, context) {
-        with (context) {
-            try {
-                return eval(expression);
-            } catch (e) {
-                return expression;
-            }
-        }
-    }
-</script>
 
 </html>
