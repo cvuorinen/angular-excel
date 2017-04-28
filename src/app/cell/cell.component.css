@@ -1,0 +1,8 @@
+input { border: none; outline: none; }
+input, .output {
+    position: absolute; top: 0; left: 1px;
+    width: 95%; padding: 3px 0 0 8px;
+    background: white; overflow: hidden;
+}
+.output { pointer-events: none; }
+input:focus + .output { display: none; }
