@@ -1,9 +1,13 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-import { FormsModule, ReactiveFormsModule } from "@angular/forms";
+import { Component } from "@angular/core";
 
 import { ExcelComponent } from './excel.component';
-import { CellComponent } from "app/cell/cell.component";
-import { SpreadsheetService } from "app/spreadsheet.service";
+
+@Component({
+  selector: 'cell',
+  template: `<div>mock</div>`
+})
+class MockCellComponent { }
 
 describe('ExcelComponent', () => {
   let component: ExcelComponent;
@@ -12,15 +16,7 @@ describe('ExcelComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [
-        ExcelComponent,
-        CellComponent
-      ],
-      imports: [
-        FormsModule,
-        ReactiveFormsModule,
-      ],
-      providers: [SpreadsheetService],
+      declarations: [ExcelComponent, MockCellComponent]
     })
     .compileComponents();
   }));
@@ -42,10 +38,12 @@ describe('ExcelComponent', () => {
   }));
 
   it('should render a table with columns and rows', async(() => {
-    expect(element.querySelector('table').rows.length).toEqual(component.rows.length + 1);
+    expect(element.querySelector('table').rows.length)
+      .toEqual(component.rows.length + 1);
   }));
 
   it('should render a cell element in each table cell', async(() => {
-    expect(element.querySelectorAll('cell').length).toEqual(component.columns.length * component.rows.length);
+    expect(element.querySelectorAll('cell').length)
+      .toEqual(component.columns.length * component.rows.length);
   }));
 });
