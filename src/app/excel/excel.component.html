@@ -5,7 +5,7 @@
     <tr *ngFor="let row of rows">
         <th>{{ row }}</th>
         <td *ngFor="let col of columns">
-            <cell [id]="col+row"></cell>
+            <cell [id]="col+row" [attr.id]="col+row"></cell>
         </td>
     </tr>
 </table>
