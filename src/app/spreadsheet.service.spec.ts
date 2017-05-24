@@ -1,4 +1,3 @@
-import { TestBed, fakeAsync, inject, tick } from '@angular/core/testing';
 import { Subject } from "rxjs";
 import * as ngParser from "ng-parser";
 
@@ -8,10 +7,7 @@ describe('SpreadsheetService', () => {
   let service: SpreadsheetService;
 
   beforeEach(() => {
-    TestBed.configureTestingModule({
-      providers: [SpreadsheetService]
-    });
-    service = TestBed.get(SpreadsheetService);
+    service = new SpreadsheetService();
   });
 
   it('should expose `update$` Subject', () => {
@@ -43,25 +39,22 @@ describe('SpreadsheetService', () => {
     });
   });
 
-  it('should evaluate with updated cell values', fakeAsync(() => {
+  it('should evaluate with updated cell values', () => {
     const expression = 'A1+2';
     service.update$.next({ id: 'A1', value: 2 });
-    tick();
 
     expect(service.evaluate(expression)).toEqual(4);
 
     service.update$.next({ id: 'A1', value: 7 });
-    tick();
 
     expect(service.evaluate(expression)).toEqual(9);
-  }));
+  });
 
-  it('should evaluate sum function', fakeAsync(() => {
+  it('should evaluate sum function', () => {
     const expression = 'sum(A1,B1,4)';
     service.update$.next({ id: 'A1', value: 2 });
     service.update$.next({ id: 'B1', value: 3 });
-    tick();
 
     expect(service.evaluate(expression)).toEqual(9);
-  }));
+  });
 });
