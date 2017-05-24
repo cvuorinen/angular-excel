@@ -1,43 +1,43 @@
-import { TestBed, async } from '@angular/core/testing';
-import { FormsModule, ReactiveFormsModule } from "@angular/forms";
+import { TestBed, ComponentFixture, async } from '@angular/core/testing';
+import { NO_ERRORS_SCHEMA } from "@angular/core";
 
 import { AppComponent } from './app.component';
-import { ExcelComponent } from "app/excel/excel.component";
-import { CellComponent } from "app/cell/cell.component";
-import { SpreadsheetService } from "app/spreadsheet.service";
 
 describe('AppComponent', () => {
+  let component: AppComponent;
+  let fixture: ComponentFixture<AppComponent>;
+  let element: HTMLElement;
+
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       declarations: [
-        AppComponent,
-        ExcelComponent,
-        CellComponent
+        AppComponent
       ],
-      imports: [
-        FormsModule,
-        ReactiveFormsModule,
-      ],
-      providers: [SpreadsheetService],
+      // Tells the compiler not to error on unknown elements and attributes
+      schemas: [NO_ERRORS_SCHEMA]
     }).compileComponents();
   }));
 
-  it('should create the app', async(() => {
-    const fixture = TestBed.createComponent(AppComponent);
-    const app = fixture.debugElement.componentInstance;
-    expect(app).toBeTruthy();
+  beforeEach(() => {
+    fixture = TestBed.createComponent(AppComponent);
+    component = fixture.componentInstance;
+    element = fixture.nativeElement;
+    fixture.detectChanges();
+  });
+
+  it('should create the app component', async(() => {
+    expect(component).toBeTruthy();
   }));
 
   it('should render title in a h1 tag', async(() => {
-    const fixture = TestBed.createComponent(AppComponent);
-    fixture.detectChanges();
-    const compiled = fixture.debugElement.nativeElement;
-    expect(compiled.querySelector('h1').textContent).toContain('Angular Excel');
+    const titleElement = element.querySelector('h1');
+
+    expect(titleElement.textContent).toContain('Angular Excel');
   }));
 
   it('should render one excel element', async(() => {
-    const fixture = TestBed.createComponent(AppComponent);
-    const element = fixture.nativeElement;
-    expect(element.querySelectorAll('excel').length).toEqual(1);
+    const excelElements = element.querySelectorAll('excel');
+
+    expect(excelElements.length).toEqual(1);
   }));
 });
