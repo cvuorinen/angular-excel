@@ -1,32 +1,20 @@
-import { async, fakeAsync, tick, ComponentFixture, TestBed, inject } from '@angular/core/testing';
-import { FormsModule, ReactiveFormsModule, FormControl } from "@angular/forms";
+import { fakeAsync, tick } from '@angular/core/testing';
+import { FormControl } from "@angular/forms";
+import { Subject } from "rxjs";
 
 import { CellComponent } from './cell.component';
 import { SpreadsheetService } from "app/spreadsheet.service";
 
 describe('CellComponent', () => {
   let component: CellComponent;
-  let fixture: ComponentFixture<CellComponent>;
   let service: SpreadsheetService;
 
-  beforeEach(async(() => {
-    TestBed.configureTestingModule({
-      declarations: [CellComponent],
-      imports: [FormsModule, ReactiveFormsModule],
-      providers: [SpreadsheetService],
-    })
-    .compileComponents();
-  }));
-
   beforeEach(() => {
-    fixture = TestBed.createComponent(CellComponent);
-    component = fixture.componentInstance;
-    service = TestBed.get(SpreadsheetService);
-    fixture.detectChanges();
-  });
+    service = jasmine.createSpyObj<SpreadsheetService>('SpreadsheetService', ['evaluate']);
+    service.update$ = new Subject();
 
-  it('should create', () => {
-    expect(component).toBeTruthy();
+    component = new CellComponent(service);
+    component.ngOnInit();
   });
 
   it('should create `formula` FormControl', () => {
@@ -35,7 +23,6 @@ describe('CellComponent', () => {
 
   it('should evaluate with SpreadsheetService when formula value changes', fakeAsync(() => {
     const value = 'foo';
-    spyOn(service, 'evaluate');
 
     component.formula.setValue(value);
     tick(500); // because .debounceTime(400)
@@ -47,7 +34,7 @@ describe('CellComponent', () => {
     const id = 'A1';
     const result = 'bar';
     component.id = id;
-    spyOn(service, 'evaluate').and.returnValue(result);
+    (service.evaluate as jasmine.Spy).and.returnValue(result);
     spyOn(service.update$, 'next');
 
     component.formula.setValue('foo');
@@ -57,7 +44,6 @@ describe('CellComponent', () => {
   }));
 
   it('should not re-evaluate when another unrelated cell updates', fakeAsync(() => {
-    spyOn(service, 'evaluate');
     component.formula.setValue('foo2');
     tick(500); // because .debounceTime(400)
     const count = (service.evaluate as jasmine.Spy).calls.count();
@@ -69,7 +55,6 @@ describe('CellComponent', () => {
   }));
 
   it('should re-evaluate when a cell that is referenced in the formula updates', fakeAsync(() => {
-    spyOn(service, 'evaluate');
     component.formula.setValue('B1 + 2');
     tick(500); // because .debounceTime(400)
     const count = (service.evaluate as jasmine.Spy).calls.count();
