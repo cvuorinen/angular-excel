@@ -8,10 +8,12 @@ import { SpreadsheetService } from "app/spreadsheet.service";
 describe('CellComponent', () => {
   let component: CellComponent;
   let service: SpreadsheetService;
+  const update$ = new Subject();
 
   beforeEach(() => {
-    service = jasmine.createSpyObj<SpreadsheetService>('SpreadsheetService', ['evaluate']);
-    service.update$ = new Subject();
+    service = jasmine.createSpyObj<SpreadsheetService>('SpreadsheetService', ['getCellUpdates', 'updateCellValue', 'evaluate']);
+    (service.getCellUpdates as jasmine.Spy)
+      .and.returnValue(update$.asObservable());
 
     component = new CellComponent(service);
     component.ngOnInit();
@@ -35,12 +37,11 @@ describe('CellComponent', () => {
     const result = 'bar';
     component.id = id;
     (service.evaluate as jasmine.Spy).and.returnValue(result);
-    spyOn(service.update$, 'next');
 
     component.formula.setValue('foo');
     tick(500); // because .debounceTime(400)
 
-    expect(service.update$.next).toHaveBeenCalledWith({ id, value: result });
+    expect(service.updateCellValue).toHaveBeenCalledWith({ id, value: result });
   }));
 
   it('should not re-evaluate when another unrelated cell updates', fakeAsync(() => {
@@ -48,7 +49,7 @@ describe('CellComponent', () => {
     tick(500); // because .debounceTime(400)
     const count = (service.evaluate as jasmine.Spy).calls.count();
 
-    service.update$.next({ id: 'B1', value: 'baz' });
+    update$.next({ id: 'B1', value: 'baz' });
     tick();
 
     expect(service.evaluate).toHaveBeenCalledTimes(count);
@@ -59,7 +60,7 @@ describe('CellComponent', () => {
     tick(500); // because .debounceTime(400)
     const count = (service.evaluate as jasmine.Spy).calls.count();
 
-    service.update$.next({ id: 'B1', value: 'baz' });
+    update$.next({ id: 'B1', value: 'baz' });
     tick();
 
     expect((service.evaluate as jasmine.Spy).calls.count()).toBeGreaterThan(count);

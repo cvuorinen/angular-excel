@@ -28,7 +28,7 @@ export class CellComponent implements OnInit {
       .distinctUntilChanged();
 
     // Filter spreadsheet updates to only the cells used in the formula
-    const update$: Observable<CellValue> = this.spreadsheet.update$
+    const update$: Observable<CellValue> = this.spreadsheet.getCellUpdates()
       .withLatestFrom(formula$) // combine formula so we can filter with it
       .filter(([cell, formula]: [CellValue, string]) => formula.indexOf(cell.id) > -1)
       .map((values) => values[0]) // just the cell value from now on
@@ -42,7 +42,7 @@ export class CellComponent implements OnInit {
 
     // Emit new value
     this.value$.subscribe((value) => {
-      this.spreadsheet.update$.next(this.getValue(value));
+      this.spreadsheet.updateCellValue(this.getValue(value));
     });
   }
 

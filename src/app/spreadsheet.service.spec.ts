@@ -1,5 +1,4 @@
 import { Subject } from "rxjs";
-import * as ngParser from "ng-parser";
 
 import { SpreadsheetService } from './spreadsheet.service';
 
@@ -8,10 +7,6 @@ describe('SpreadsheetService', () => {
 
   beforeEach(() => {
     service = new SpreadsheetService();
-  });
-
-  it('should expose `update$` Subject', () => {
-    expect(service.update$ instanceof Subject).toBeTruthy();
   });
 
   describe('evaluate', () => {
@@ -41,19 +36,19 @@ describe('SpreadsheetService', () => {
 
   it('should evaluate with updated cell values', () => {
     const expression = 'A1+2';
-    service.update$.next({ id: 'A1', value: 2 });
+    service.updateCellValue({ id: 'A1', value: 2 });
 
     expect(service.evaluate(expression)).toEqual(4);
 
-    service.update$.next({ id: 'A1', value: 7 });
+    service.updateCellValue({ id: 'A1', value: 7 });
 
     expect(service.evaluate(expression)).toEqual(9);
   });
 
   it('should evaluate sum function', () => {
     const expression = 'sum(A1,B1,4)';
-    service.update$.next({ id: 'A1', value: 2 });
-    service.update$.next({ id: 'B1', value: 3 });
+    service.updateCellValue({ id: 'A1', value: 2 });
+    service.updateCellValue({ id: 'B1', value: 3 });
 
     expect(service.evaluate(expression)).toEqual(9);
   });
