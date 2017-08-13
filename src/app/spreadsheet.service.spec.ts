@@ -1,3 +1,4 @@
+import {cold, getTestScheduler} from 'jasmine-marbles';
 import { Subject } from "rxjs";
 
 import { SpreadsheetService } from './spreadsheet.service';
@@ -51,5 +52,13 @@ describe('SpreadsheetService', () => {
     service.updateCellValue({ id: 'B1', value: 3 });
 
     expect(service.evaluate(expression)).toEqual(9);
+  });
+
+  it('should publish updates as Observable', () => {
+    const updates = cold('--a-b---c-d');
+
+    updates.subscribe(v => service.updateCellValue(v));
+
+    expect(service.getCellUpdates()).toBeObservable(updates);
   });
 });
