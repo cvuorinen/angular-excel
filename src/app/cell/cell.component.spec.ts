@@ -1,6 +1,6 @@
 import { fakeAsync, tick } from '@angular/core/testing';
 import { FormControl } from "@angular/forms";
-import { Subject, Observable } from "rxjs";
+import { Subject, Observable, TestScheduler } from "rxjs";
 import { cold, getTestScheduler } from 'jasmine-marbles';
 
 import { CellComponent } from './cell.component';
@@ -67,18 +67,25 @@ describe('CellComponent', () => {
   }));
 
   describe('value$', () => {
-    let originalDebounce;
+    let originalDebounce, originalTimeFactor;
     beforeAll(() => {
       // automagically inject test scheduler into debounceTime
       originalDebounce = Observable.prototype.debounceTime;
       function stubWithScheduler<T>(this: Observable<T>, time) {
-        // divide time by 10 (so that 100ms becomes 10 "frames" which means one '-')
-        return originalDebounce.call(this, time/10, getTestScheduler());
+        return originalDebounce.call(this, time, getTestScheduler());
       }
       Observable.prototype['debounceTime'] = stubWithScheduler;
+
+      // Set frameTimeFactor to 100 (so that one '-' becomes 100ms)
+      originalTimeFactor = TestScheduler['frameTimeFactor'];
+      TestScheduler['frameTimeFactor'] = 100;
     });
     afterAll(() => {
       Observable.prototype['debounceTime'] = originalDebounce;
+      TestScheduler['frameTimeFactor'] = originalTimeFactor;
+    });
+    beforeEach(() => {
+      getTestScheduler()['maxFrames'] = 7500;
     });
 
     const formulaProvider = [
