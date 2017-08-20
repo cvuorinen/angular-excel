@@ -23,10 +23,9 @@ export class CellComponent implements OnInit {
 
   constructor(private spreadsheet: SpreadsheetService) { }
 
-  ngOnInit(debounce: number = 400, scheduler?: IScheduler) {
-    // support injecting debounce time and sceduler (for testing purposes)
+  ngOnInit() {
     const formula$: Observable<string> = this.formula.valueChanges
-      .debounceTime(debounce, scheduler)
+      .debounceTime(400)
       .distinctUntilChanged();
 
     // Filter spreadsheet updates to only the cells used in the formula

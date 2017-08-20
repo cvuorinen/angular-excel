@@ -1,6 +1,6 @@
 import { fakeAsync, tick } from '@angular/core/testing';
 import { FormControl } from "@angular/forms";
-import { Subject } from "rxjs";
+import { Subject, Observable } from "rxjs";
 import { cold, getTestScheduler } from 'jasmine-marbles';
 
 import { CellComponent } from './cell.component';
@@ -67,21 +67,34 @@ describe('CellComponent', () => {
   }));
 
   describe('value$', () => {
-    const debounce = 20;
+    let originalDebounce;
+    beforeAll(() => {
+      // automagically inject test scheduler into debounceTime
+      originalDebounce = Observable.prototype.debounceTime;
+      function stubWithScheduler<T>(this: Observable<T>, time) {
+        // divide time by 10 (so that 100ms becomes 10 "frames" which means one '-')
+        return originalDebounce.call(this, time/10, getTestScheduler());
+      }
+      Observable.prototype['debounceTime'] = stubWithScheduler;
+    });
+    afterAll(() => {
+      Observable.prototype['debounceTime'] = originalDebounce;
+    });
+
     const formulaProvider = [
       { // debounceTime
-        formula: '--a---b-c----d',
-        value$:  '----A-----C----D'
+        formula: '--a-----b-c----d----',
+        value$:  '------A-------C----D'
       },
       { // distinctUntilChanged
-        formula: '--a-b---b---c----c',
-        value$:  '------B-------C-----'
+        formula: '--a-b-----b---c----c----',
+        value$:  '--------B---------C-----'
       },
     ];
     formulaProvider.map(data => {
       it('should re-evaluate when formula changes', () => {
         service.evaluate.and.callFake(v => v.toUpperCase());
-        component.ngOnInit(debounce, getTestScheduler());
+        component.ngOnInit();
 
         cold(data.formula).subscribe(v => component.formula.setValue(v));
 
@@ -96,14 +109,14 @@ describe('CellComponent', () => {
     const formulaValues = { x: 'X1', y: 'Y2' };
     const cellUpdateProvider = [
       {
-        formula: 'x-----------------',
-        update$: 'x-----y--x-----x-y',
-        value$:  '--1------2-----3--'
+        formula: 'x-------------------',
+        update$: 'x-------y--x-----x-y',
+        value$:  '----2------3-----4--'
       },
       {
-        formula: '--x---------y-----',
-        update$: 'x-----y--x-----x-y',
-        value$:  '----1----2----3--4'
+        formula: '--x---------y-------',
+        update$: 'x-------y--x-----x-y',
+        value$:  '------2----3----5--6'
       },
     ];
     cellUpdateProvider.map(data => {
@@ -112,7 +125,7 @@ describe('CellComponent', () => {
         service.evaluate.and.callFake(_ => service.evaluate.calls.count().toString());
 
         service.getCellUpdates.and.returnValue(cold(data.update$, updateValues));
-        component.ngOnInit(debounce, getTestScheduler());
+        component.ngOnInit();
 
         cold(data.formula, formulaValues)
           .subscribe(v => component.formula.setValue(v));
