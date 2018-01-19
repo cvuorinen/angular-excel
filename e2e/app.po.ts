@@ -5,18 +5,6 @@ export class AngularExcelPage {
     return browser.get('/');
   }
 
-  addDelay(delay: number = 10) {
-    var origFn = browser.driver.controlFlow().execute;
-    browser.driver.controlFlow().execute = (...args) => {
-      // queue wait to adjust the execution speed
-      origFn.call(browser.driver.controlFlow(), () => {
-        return protractor.promise.delayed(delay);
-      });
-
-      return origFn.apply(browser.driver.controlFlow(), args);
-    };
-  }
-
   getHeadingText() {
     return element(by.css('app-root h1')).getText();
   }

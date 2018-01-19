@@ -1,12 +1,12 @@
 import { AngularExcelPage } from './app.po';
-import { browser } from 'protractor';
+import { browser, protractor } from 'protractor';
 
 describe('angular-excel App', () => {
   let page: AngularExcelPage;
+  //addDelay();
 
   beforeEach(() => {
     page = new AngularExcelPage();
-    //page.addDelay();
   });
 
   it('should display heading', () => {
@@ -78,3 +78,15 @@ describe('angular-excel App', () => {
     expect(page.getCellOutput(cell3Id)).toBe('18');
   });
 });
+
+function addDelay(delay: number = 100) {
+  var origFn = browser.driver.controlFlow().execute;
+  browser.driver.controlFlow().execute = (...args) => {
+    // queue wait to adjust the execution speed
+    origFn.call(browser.driver.controlFlow(), () => {
+      return protractor.promise.delayed(delay);
+    });
+
+    return origFn.apply(browser.driver.controlFlow(), args);
+  };
+}
