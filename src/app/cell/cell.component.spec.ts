@@ -11,6 +11,9 @@ describe('CellComponent', () => {
   let service: any;
   const update$ = new Subject();
 
+  // value greater than the debounceTime used in component
+  const skipOverDebounce = 500;
+
   beforeEach(() => {
     service = jasmine.createSpyObj<SpreadsheetService>('SpreadsheetService', ['getCellUpdates', 'updateCellValue', 'evaluate']);
     service.getCellUpdates.and.returnValue(update$.asObservable());
@@ -27,7 +30,7 @@ describe('CellComponent', () => {
     const value = 'foo';
 
     component.formula.setValue(value);
-    tick(500); // because .debounceTime(400)
+    tick(skipOverDebounce);
 
     expect(service.evaluate).toHaveBeenCalledWith(value);
   }));
@@ -39,14 +42,14 @@ describe('CellComponent', () => {
     service.evaluate.and.returnValue(result);
 
     component.formula.setValue('foo');
-    tick(500); // because .debounceTime(400)
+    tick(skipOverDebounce);
 
     expect(service.updateCellValue).toHaveBeenCalledWith({ id, value: result });
   }));
 
   it('should not re-evaluate when another unrelated cell updates', fakeAsync(() => {
     component.formula.setValue('foo2');
-    tick(500); // because .debounceTime(400)
+    tick(skipOverDebounce);
     const count = service.evaluate.calls.count();
 
     update$.next({ id: 'B1', value: 'baz' });
@@ -57,7 +60,7 @@ describe('CellComponent', () => {
 
   it('should re-evaluate when a cell that is referenced in the formula updates', fakeAsync(() => {
     component.formula.setValue('B1 + 2');
-    tick(500); // because .debounceTime(400)
+    tick(skipOverDebounce);
     const count = service.evaluate.calls.count();
 
     update$.next({ id: 'B1', value: 'baz' });
