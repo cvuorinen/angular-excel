@@ -1,13 +1,7 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-import { Component } from "@angular/core";
+import { NO_ERRORS_SCHEMA } from "@angular/core";
 
 import { ExcelComponent } from './excel.component';
-
-@Component({
-  selector: 'cell',
-  template: `<div>mock</div>`
-})
-class MockCellComponent { }
 
 describe('ExcelComponent', () => {
   let component: ExcelComponent;
@@ -16,7 +10,8 @@ describe('ExcelComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ExcelComponent, MockCellComponent]
+      declarations: [ ExcelComponent ],
+      schemas: [ NO_ERRORS_SCHEMA ]
     })
     .compileComponents();
   }));
