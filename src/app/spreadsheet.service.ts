@@ -1,15 +1,12 @@
 import { Injectable } from '@angular/core';
-import { Subject } from "rxjs";
+import { Observable, Subject } from "rxjs";
 import * as ngParser from "ng-parser";
 
 import { CellValue } from "./cell/cell.component";
 
 @Injectable()
 export class SpreadsheetService {
-  // Subject stream for cells to broadcast when they update
-  // Rx.Subject allows for both publish and subscribe, so cells can
-  // also subscribe to get notified about updates to other cells.
-  public update$: Subject<CellValue> = new Subject();
+  private update$: Subject<CellValue> = new Subject();
 
   // Object that holds the latest value of each cell
   private context: Object = {
@@ -25,6 +22,14 @@ export class SpreadsheetService {
         return accumulator;
       }, this.context)
       .subscribe(values => this.context = values);
+  }
+
+  public getCellUpdates(): Observable<CellValue> {
+    return this.update$.asObservable();
+  }
+
+  public updateCellValue(value: CellValue) {
+    this.update$.next(value);
   }
 
   public evaluate(expression: string): any {

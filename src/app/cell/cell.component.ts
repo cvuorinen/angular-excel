@@ -1,6 +1,7 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { FormControl } from "@angular/forms";
 import { Observable } from "rxjs/Observable";
+import { IScheduler } from "rxjs/Scheduler";
 import 'rxjs/Rx';
 
 import { SpreadsheetService } from "../spreadsheet.service";
@@ -28,7 +29,7 @@ export class CellComponent implements OnInit {
       .distinctUntilChanged();
 
     // Filter spreadsheet updates to only the cells used in the formula
-    const update$: Observable<CellValue> = this.spreadsheet.update$
+    const update$: Observable<CellValue> = this.spreadsheet.getCellUpdates()
       .withLatestFrom(formula$) // combine formula so we can filter with it
       .filter(([cell, formula]: [CellValue, string]) => formula.indexOf(cell.id) > -1)
       .map((values) => values[0]) // just the cell value from now on
@@ -38,11 +39,12 @@ export class CellComponent implements OnInit {
     this.value$ = Observable.combineLatest(formula$, update$,
       (formula, cell) => formula) // only need formula from now on
       .map(formula => this.spreadsheet.evaluate(formula))
-      .distinctUntilChanged();
+      .distinctUntilChanged()
+      .share();
 
     // Emit new value
     this.value$.subscribe((value) => {
-      this.spreadsheet.update$.next(this.getValue(value));
+      this.spreadsheet.updateCellValue(this.getValue(value));
     });
   }
 
